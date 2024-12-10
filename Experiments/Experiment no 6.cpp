@@ -1,68 +1,63 @@
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <string>
+
 using namespace std;
 
-struct personal_record {
+// Define a structure for personal records
+struct PersonalRecord {
     string name;
-    string dob;
-    string telephone_number;
+    string dob;  // Date of Birth
+    string telephone;
 
-    personal_record(string name, string dob, string telephone_number)
-        : name(name), dob(dob), telephone_number(telephone_number) {}
-
-    bool operator<(const personal_record &other) const {
-        return name < other.name;
-    }
-
-    bool operator==(const personal_record &other) const {
-        return name == other.name;
+    // Overload the output operator for easy display
+    friend ostream& operator<<(ostream& os, const PersonalRecord& record) {
+        os << "Name: " << record.name 
+           << ", DOB: " << record.dob 
+           << ", Telephone: " << record.telephone;
+        return os;
     }
 };
 
-void display(const vector<personal_record> &records) {
-    for (const auto &record : records) {
-        cout << "Name: " << record.name << ", DOB: " << record.dob << ", Telephone: " << record.telephone_number << endl;
-    }
-}
-
 int main() {
-    vector<personal_record> records;
-    records.push_back(personal_record("onyx", "1987-03-15", "9876543210"));
-    records.push_back(personal_record("riya", "1992-07-22", "9123456789"));
-    records.push_back(personal_record("zich", "1990-11-30", "9988776655"));
-    records.push_back(personal_record("binod", "1985-12-25", "9765432101"));
+    vector<PersonalRecord> records = {
+        {"Alice Johnson", "1990-01-15", "1234567890"},
+        {"Bob Smith", "1985-05-20", "9876543210"},
+        {"Charlie Brown", "1992-08-30", "5555555555"}
+    };
 
-    cout << "Records before sorting:" << endl;
-    display(records);
-
-    sort(records.begin(), records.end());
-
-    cout << "Records after sorting:" << endl;
-    display(records);
-
-    string search_name = "mahi";
-    personal_record search_record(search_name, "", "");
-    bool found = binary_search(records.begin(), records.end(), search_record);
-
-    if (!found) {
-            cout << "Name not found in records." <<endl;
-    } else {
-        cout << "Name found in records." << endl;
+    // Display original records
+    cout << "Original Records:\n";
+    for (const auto& record : records) {
+        cout << record << "\n";
     }
 
-    search_name = "rahul";
-    search_record = personal_record(search_name, "", "");
-    found = binary_search(records.begin(), records.end(), search_record);
+    // Sort records by name
+    sort(records.begin(), records.end(), [](const PersonalRecord& a, const PersonalRecord& b) {
+        return a.name < b.name;
+    });
 
-    if (!found) {
-        cout << "Name not found in records." << endl;
-    } else {
-        cout << "Name found in records." << endl;
+    // Display sorted records
+    cout << "\nSorted Records by Name:\n";
+    for (const auto& record : records) {
+        cout << record << "\n";
     }
+
+    // Search for a record by name
+    string searchName;
+    cout << "\nEnter the name to search: ";
+    getline(cin, searchName);
+
+    auto it = find_if(records.begin(), records.end(), [&](const PersonalRecord& record) {
+        return record.name == searchName;
+    });
+
+    if (it != records.end()) {
+        cout << "Record found:\n" << *it << "\n";
+    } else {
+        cout << "Record not found.\n";
+    }
+
     return 0;
-
-
 }
